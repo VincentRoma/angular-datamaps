@@ -21,11 +21,16 @@ angular.module('datamaps').directive('datamap', [
             scope: 'usa',
             height: scope.height,
             width: scope.width,
+            aspectRatio: scope.aspectRatio,
             fills: { defaultFill: '#b9b9b9' },
             data: {},
             done: function (datamap) {
               function redraw() {
                 datamap.svg.selectAll('g').attr('transform', 'translate(' + d3.event.translate + ')scale(' + d3.event.scale + ')');
+                var bubbleRadius = 2;
+                if (bubbleRadius / d3.event.scale > 0.6 && bubbleRadius / d3.event.scale < bubbleRadius) {
+                  datamap.svg.selectAll('.datamaps-bubble').attr('r', bubbleRadius / d3.event.scale);
+                }
               }
               if (angular.isDefined(attrs.onClick)) {
                 datamap.svg.selectAll('.datamaps-subunit').on('click', function (geography) {
@@ -48,6 +53,7 @@ angular.module('datamaps').directive('datamap', [
             // Update bounding box
             scope.width = (map.options || {}).width || null;
             scope.height = (map.options || {}).height || (scope.width ? scope.width * 0.5 : null);
+            scope.aspectRatio = (map.options || {}).aspectRatio || null;
             scope.legendHeight = (map.options || {}).legendHeight || 50;
             // Set a few defaults for the directive
             scope.mapOptions = mapOptions();
